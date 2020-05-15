@@ -43,6 +43,13 @@ def start(update, context):
 def help(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text('Help!')
+    
+def strategy(update, context):
+    user = update.message.from_user
+    logger.info("Strategy of %s: %s", user.first_name, update.message.text)
+    update.message.reply_text('Okey')
+    global decoding_strategy
+    decoding_strategy = update.message.text
 
 
 
@@ -59,7 +66,13 @@ def echo(update, context):
         for t in range(10):
             # first input to the decoder is the <sos> token
             output, hidden = model.decoder(target, hidden, encoder_outputs)
-            target = output.max(1)[1]
+            if decoding_strategy=='top1':
+              target = logits.max(1)[1]
+            elif decoding_strategy=='topk':
+              target = logits.topk(k)[1][0][random.randint(0, k-1)].unsqueeze(-1)
+            else:
+              target = torch.multinomial(logits.squeeze().div(temp).exp().cpu(), 1)
+
             word = text_field.vocab.itos[target.numpy()[0]]
             if word == '<eos>':
                 break
@@ -85,6 +98,9 @@ def main():
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler('top1', strategy))
+    dp.add_handler(CommandHandler('topk', strategy))
+    dp.add_handler(CommandHandler('multinomial',strategy))
     dp.add_handler(CommandHandler("help", help))
 
     # on noncommand i.e message - echo the message on Telegram
