@@ -45,8 +45,8 @@ MAX_LENGTH = 10
 
 #Print welcome message
 print('-------------------------------')
-print('Welcome to the Chit Chat system')
-print("Write 'Bye' to end the system.")
+print('Ongi etorri Chit Chat sistemara')
+print("Idatzi 'agur' amaitzeko.")
 print('-------------------------------')
 
 #Main system loop
@@ -54,7 +54,7 @@ user = input('-')
 model.eval()
 decoding_strategy = args.decoding_strategy
 
-while user != 'Bye':
+while user != 'Agur':
     sentence = evaluate(' '.join(_basic_english_normalize(user)))
     print('-' + sentence.strip().capitalize())
     user = input('-')
