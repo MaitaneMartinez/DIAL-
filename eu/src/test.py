@@ -9,7 +9,7 @@ parser.add_argument('-decoding_strategy', type=str, default='top1', choices=['to
 
 args = parser.parse_args()
 
-def decode(logits, decoding_strategy='max', k=3, temp=0.4):
+def decode(logits, decoding_strategy='top1', k=3, temp=0.4):
   if decoding_strategy=='top1':
     target = logits.max(1)[1]
   elif decoding_strategy=='topk':
@@ -46,7 +46,7 @@ MAX_LENGTH = 10
 #Print welcome message
 print('-------------------------------')
 print('Ongi etorri Chit Chat sistemara')
-print("Idatzi 'agur' amaitzeko.")
+print("Idatzi 'Agur' amaitzeko.")
 print('-------------------------------')
 
 #Main system loop
@@ -55,10 +55,10 @@ model.eval()
 decoding_strategy = args.decoding_strategy
 
 while user != 'Agur':
-    sentence = evaluate(' '.join(_basic_english_normalize(user)))
+    sentence = evaluate(user)
     print('-' + sentence.strip().capitalize())
     user = input('-')
     
-sentence = evaluate(' '.join(_basic_english_normalize(user)))
+sentence = evaluate(user)
 print('-' + sentence.strip().capitalize())
 
