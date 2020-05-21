@@ -1,10 +1,15 @@
 import csv
 
 def preprocesing(esaldia):
-  lista = list(esaldia)
-  if lista[0] == "-":
-    lista.pop(0)
+  try:
+    lista = list(esaldia)
+    if lista[0] == "-":
+      lista.pop(0)
 
+      if lista[-1] == ".":
+        lista.pop(-1)
+  except:
+    print(esaldia)
   return ''.join(lista)
 
 def main():
