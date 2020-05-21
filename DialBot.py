@@ -33,6 +33,9 @@ text_field = torch.load('model/text_field.Field')
 model = torch.load('model/model.pt', map_location=torch.device('cpu'))
 torch.nn.Module.dump_patches = True
 MAX_LENGTH = 10
+decoding_strategy = 1
+k=3
+temp=0.4
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
 def start(update, context):
@@ -48,8 +51,12 @@ def strategy(update, context):
     user = update.message.from_user
     logger.info("Strategy of %s: %s", user.first_name, update.message.text)
     update.message.reply_text('Okey')
-    global decoding_strategy
-    decoding_strategy = update.message.text
+    if update.message.text == '/top1':
+        decoding_strategy = 1
+    if update.message.text == '/topk':
+        decoding_strategy = 2
+    if update.message.text == '/multinomial':
+        deconding_strategy = 3
 
 
 
@@ -66,12 +73,12 @@ def echo(update, context):
         for t in range(10):
             # first input to the decoder is the <sos> token
             output, hidden = model.decoder(target, hidden, encoder_outputs)
-            if decoding_strategy=='top1':
-              target = logits.max(1)[1]
-            elif decoding_strategy=='topk':
-              target = logits.topk(k)[1][0][random.randint(0, k-1)].unsqueeze(-1)
+            if decoding_strategy==1:
+              target = output.max(1)[1]
+            elif decoding_strategy==2:
+              target = output.topk(k)[1][0][random.randint(0, k-1)].unsqueeze(-1)
             else:
-              target = torch.multinomial(logits.squeeze().div(temp).exp().cpu(), 1)
+              target = torch.multinomial(output.squeeze().div(temp).exp().cpu(), 1)
 
             word = text_field.vocab.itos[target.numpy()[0]]
             if word == '<eos>':
