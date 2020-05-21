@@ -36,10 +36,10 @@ train_iterator  = BucketIterator(
 #Tamainak egokitu zuen beharretara
 INPUT_DIM = len(text_field.vocab)
 OUTPUT_DIM = len(text_field.vocab)
-ENC_EMB_DIM = 256
-DEC_EMB_DIM = 256
-ENC_HID_DIM = 512
-DEC_HID_DIM = 512
+ENC_EMB_DIM = 64
+DEC_EMB_DIM = 64
+ENC_HID_DIM = 128
+DEC_HID_DIM = 128
 ATTN_DIM = 64
 ENC_DROPOUT = 0.5
 DEC_DROPOUT = 0.5
